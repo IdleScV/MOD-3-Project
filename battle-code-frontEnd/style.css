@@ -1,0 +1,180 @@
+@font-face {
+	font-family: "IBM 3270";
+	src: url("./static/fonts/3270Narrow_205e07e344fb55f5c19fab2964741c2d.ttf") format("truetype");
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	background-color: #ffffff;
+	/* overflow: hidden; */
+}
+#navbar {
+	height: 100px;
+	background-color: black;
+	/* border: solid red 2px; */
+}
+
+#prompt {
+	height: 101px;
+	width: 400px;
+	margin: 10px auto;
+	background-color: #232323;
+	color: #baee70;
+	border-radius: 5px;
+	border: solid black 2px;
+}
+
+#prompt_field {
+	font-family: "Consolas";
+	font-size: 13px;
+	line-height: 100%;
+	text-align: left;
+	vertical-align: auto;
+	border: dotted red 0.5px;
+	padding: 5px 8px;
+	height: 81px;
+	width: 375px;
+	margin: 10px auto;
+	background-color: #000000;
+	border-radius: 3px;
+}
+
+#code_ground {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	/* border: solid red 2px; */
+}
+
+#user_code_field,
+#opponent_code_field {
+	text-align: left;
+	margin: 0px 30px;
+	/* border: solid black 2px; */
+	padding: 5px 5px;
+	border-radius: 3px;
+	box-shadow: 0 15px 10px #777;
+	height: 463px;
+	width: 420px;
+}
+
+#editor {
+	height: 400px;
+	width: 400px;
+	margin: auto;
+	border: solid black 1px;
+	border-radius: 4px;
+}
+
+#opponent_editor {
+	margin: auto;
+	height: 430px;
+	width: 400px;
+	border: solid black 1px;
+	user-select: none;
+	border-radius: 4px;
+}
+
+.editor_header {
+	font-weight: 700;
+}
+
+.editor {
+	text-align: center;
+}
+
+.game_buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.execute,
+.submit,
+.clear {
+	margin: 3px 5px;
+	/* border: solid black 2px; */
+	padding: 0 3px;
+	border-radius: 4px;
+}
+
+#console {
+	margin-top: 30px;
+	font-family: "IBM 3270";
+	line-height: 85%;
+	height: 150px;
+	background-color: black;
+	color: white;
+	/* border: outset red 3px; */
+	border-radius: 3px;
+	scrollbar-color: white transparent;
+	scrollbar-width: thin;
+	box-shadow: 0px 0px 6px 2px rgba(0, 0, 0, 0.5);
+}
+
+.console_text {
+	margin-left: 30px;
+}
+
+.timer_box {
+	/* transition: box-shadow .3s; */
+	margin-top: 30px;
+	height: 150px;
+	border: solid 1px #ffffff;
+	border-radius: 10px;
+	background-color: #ffffff;
+}
+
+/* .timer_box:hover { */
+/* background-color: black; */
+/* box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.5); */
+/* } */
+
+.current_time {
+	border: dotted black 1px;
+	border-radius: 3px;
+	margin: 5px auto;
+	width: 40%;
+	height: 50%;
+	text-align: center;
+	/* margin-top: -7px; */
+	font-weight: 600;
+}
+
+.current_time > div {
+	margin-top: -35px;
+	font-size: 50px;
+	font-weight: 300;
+}
+
+.player_times {
+	display: flex;
+}
+
+.player_times > div {
+	border: dotted black 1px;
+	width: 25%;
+	height: 50px;
+	margin: 5px auto 0 auto;
+	display: column;
+	text-align: center;
+	font-size: smaller;
+	border-radius: 3px;
+	line-height: 90%;
+}
+
+.player_times > div > p {
+	margin-top: 3px;
+	font-weight: 600;
+
+	/* border: dotted red 1px; */
+}
+
+.player_times > div > div {
+	/* border: dotted red 1px; */
+	font-size: 30px;
+	margin-top: -7px;
+	font-weight: 250;
+}
