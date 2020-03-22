@@ -1,13 +1,13 @@
 const editorTheme = 'ace/theme/twilight';
 
-// initialize the editor environment using the ace library
+//! initialize the editor environment using the ace library
 var editor = ace.edit('editor');
 editor.session.setMode('ace/mode/javascript'); // editor language
 editor.setTheme(editorTheme); // editor theme
 editor.session.setTabSize(3);
 editor.session.setUseWrapMode(true);
 
-// initialize the opponent environment using the ace library
+//! initialize the opponent environment using the ace library
 var opponent_editor = ace.edit('opponent_editor');
 opponent_editor.session.setMode('ace/mode/javascript'); // editor language
 opponent_editor.setTheme(editorTheme); // editor theme
@@ -15,7 +15,7 @@ opponent_editor.setReadOnly(true); // read only
 opponent_editor.session.setTabSize(3);
 opponent_editor.session.setUseWrapMode(true);
 
-// Override default console functions for our custom Dev Console
+//! Override default console functions for our custom Dev Console
 function overrideDefault() {
 	// store default console functionality before changing them
 	default_log = console.log;

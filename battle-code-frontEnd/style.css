@@ -8,12 +8,22 @@ body {
 	flex-direction: column;
 	text-align: center;
 	background-color: #ffffff;
-	/* overflow: hidden; */
+	height: 100vh;
+	width: 100vw;
+	margin: auto;
+
+	/* border: solid red 2px; */
+}
+
+#game_body {
+	/* border: solid red 2px; */
+	/* margin-top: 50px; */
+	/* border-top: solid black 50px; */
 }
 #navbar {
-	height: 100px;
-	background-color: black;
-	/* border: solid red 2px; */
+	height: 10px;
+	/* background-color: black; */
+	border: solid red 2px;
 }
 
 #prompt {
@@ -39,6 +49,8 @@ body {
 	margin: 10px auto;
 	background-color: #000000;
 	border-radius: 3px;
+	display: flex;
+	justify-content: center;
 }
 
 #code_ground {
@@ -177,4 +189,17 @@ body {
 	font-size: 30px;
 	margin-top: -7px;
 	font-weight: 250;
+}
+
+.startBtn {
+	transition: color 0.3s;
+	font-size: 30px;
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	color: white;
+	/* border: solid red 2px; */
+}
+.startBtn:hover {
+	color: grey;
 }
