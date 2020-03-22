@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', pageSetup);
-
+editor.session.setValue('Console is Set');
 function pageSetup() {
-	overrideDefault();
-	keySetup();
-	btnSetup();
-	gameSetup();
-	// console.clear()
+	// overrideDefault();
+	// keySetup();
+	// btnSetup();
+	// gameSetup();
 }
 
 // * every character input on browser sends code to database
@@ -32,15 +31,18 @@ function btnSetup() {
 	document.querySelector('.clear').onclick = console.clear;
 
 	let runBtn = document.querySelector('.execute');
-	runBtn.addEventListener('click', function() {
-		eval(editor.getValue());
-	});
+	runBtn.addEventListener('click', submitCode);
 }
 
 //* runs submit button
 function submitCode() {
+	//* Fetch user answer
 	let codeToSubmit = document.querySelector('.ace_content').innerText;
-	let answer = codeToSubmit;
-	let k = eval(answer);
-	// debugger;
+	//! OR
+	let codeToSubmit = editor.getValue();
+
+	//* send user Answer + QuestionID to process in battle.js
+	let questionId = document.querySelector('#prompt_field').dataset.questionId;
+
+	processAnswer(codeToSubmit, questionId);
 }
