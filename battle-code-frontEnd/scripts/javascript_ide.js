@@ -72,4 +72,5 @@ function overrideDefault() {
 	};
 	clear = console.clear;
 	console.clear();
+	opponent_editor.session.setValue('');
 }
