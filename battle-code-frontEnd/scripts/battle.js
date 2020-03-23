@@ -17,17 +17,18 @@ function gameStartBtn() {
 function gameStart() {
 	document.querySelector('#prompt_field button').removeEventListener;
 	btnSetup();
+	//* Starts time
 	timeStart();
 	// let question = 'Write a function that find the sum of all primes up to n\n \n \n function should return the answer';
 	// let editorText = `function sumOfPrime(n){ \n\n}`;
 	// let test = `console.log(sumOfPrime(4))`;
 	// let questionId = 5;
 
-	let question = 'Write a function that finds sum';
+	let questionPrompt = 'Write a function that finds sum';
 	let editorText = 'function findSum(a, b){ \n\n}';
 	let test = `console.log(findSum(1,2) == 3)\nconsole.log(findSum(2,2) == 4)`;
 	let questionId = 1;
-	fillGameField(question, editorText, test, questionId);
+	fillGameField(questionPrompt, editorText, test, questionId);
 }
 //* setup submit/run/clear buttons
 function btnSetup() {
@@ -69,14 +70,23 @@ function processAnswer(answer_type_code, questionId_type_id) {
 	// fetch(URL + questionId).then(response => response.json()).then(json => checkAnswer(answer, json))
 	// checkAnswer(answer_type_code, questionId_type_id);
 
-	let exampleTest = '';
-	checkAnswer(answer_type_code, exampleTest);
+	let finalTest = `\n findSum(1,2) == 3 && findSum(2,2) == 4`;
+	checkAnswer(answer_type_code, finalTest);
 }
 
 function checkAnswer(userAnswer_type_code, actualAnswer_type_code) {
-	console.log(userAnswer_type_code);
-
+	let ans = eval(userAnswer_type_code + actualAnswer_type_code);
+	if (ans === true) {
+		//*
+		playerWin();
+	}
 	// console.log(eval(userAnswer_type_code + actualAnswer_type_code));
 }
 
+//* Starts time
 function timeStart() {}
+
+//* Stops player time & begins continuous fetch 5 times a second for when opponent finishes.
+function playerWin() {
+	alert('You finished');
+}
