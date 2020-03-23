@@ -6,6 +6,8 @@ function gameSetup() {
 //! game Ready Check
 function gameStartBtn() {
 	let startBtnArea = document.querySelector('#prompt_field');
+	startBtnArea.innerHTML = '';
+
 	let startBtn = document.createElement('button');
 	startBtn.innerText = `Click if Ready`;
 	startBtn.classList = 'startBtn';

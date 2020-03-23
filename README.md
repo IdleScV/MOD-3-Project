@@ -23,16 +23,16 @@ page_setup.js
   - sends codeContent()
   - retrives code through showOpponentCode()
 <!-- ? (Optional) Add step here for user to pick question -->
-- runs gameSetup (in battle.js) & displays 'ready' 
+- runs gameSetup() (in battle.js) & displays 'ready' 
 
 5. Once both players click ready . . .
   - removes ready button
-  - runs fillGameField for BOTH canvases
+  - runs fillGameField() for BOTH canvases
     - fill up questionfield with question
     - fill up canvases with preexisting code
-  - runs timeStart for timer to start 
-  - runs submitBtnSetup to allow player to submit their code
-    - runs checkAnswer when submitBtn is clicked
+  - runs timeStart() for timer to start 
+  - runs submitBtnSetup() to allow player to submit their code
+    - runs checkAnswer() when submitBtn is clicked
   
 6. Once player submits correct answer
 - runs playerWin()

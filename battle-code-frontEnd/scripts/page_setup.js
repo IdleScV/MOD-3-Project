@@ -1,13 +1,32 @@
 document.addEventListener('DOMContentLoaded', pageSetup);
 function pageSetup() {
 	overrideDefault();
+	// keySetup();
+	// gameSetup();
+	userLogin();
+}
+
+function userLogin() {
+	let startBtnArea = document.querySelector('#prompt_field');
+	let usernameInput = `<form id='username_form'>
+	<label for="fname">Your Name:</label><br>
+	<input type="text" id="username" name="username"><br>
+	<input type="submit" value="Submit">
+  </form> <form>`;
+
+	startBtnArea.innerHTML = usernameInput;
+	let userInput = document.querySelector('#username_form');
+	userInput.addEventListener('submit', submitUsername);
+}
+
+function submitUsername(event) {
+	event.preventDefault();
+	let currentUser = event.currentTarget.username.value;
+	'<%Session["CurrentUser"] = "' + currentUser + '"; %>';
 	keySetup();
 	gameSetup();
 }
 
-//!
-//!
-//! TRIGGERED BY GAMESETUP()
 // * every character input on browser sends code to database
 function keySetup() {
 	let runBtn = document.querySelector('.execute');
