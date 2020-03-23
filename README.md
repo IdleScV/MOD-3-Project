@@ -13,7 +13,8 @@ page_setup.js
 
 <!--! Add a step here for user log in -->
 2. User logs in with username
-
+  - If user exist, continues
+   - else creates new user, shows new user screen
 <!--! Add a step here for finding room -->
 3. Once logged in, allows user to create or find a room
 

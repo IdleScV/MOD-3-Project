@@ -1,3 +1,5 @@
+const URL = `http://127.0.0.1:3000/`;
+
 document.addEventListener('DOMContentLoaded', pageSetup);
 function pageSetup() {
 	overrideDefault();
@@ -9,7 +11,7 @@ function pageSetup() {
 function userLogin() {
 	let startBtnArea = document.querySelector('#prompt_field');
 	let usernameInput = `<form id='username_form'>
-	<label for="fname">Your Name:</label><br>
+	<label for="fname">Your username:</label><br>
 	<input type="text" id="username" name="username"><br>
 	<input type="submit" value="Submit">
   </form> <form>`;
@@ -22,9 +24,56 @@ function userLogin() {
 function submitUsername(event) {
 	event.preventDefault();
 	let currentUser = event.currentTarget.username.value;
-	'<%Session["CurrentUser"] = "' + currentUser + '"; %>';
+	// currentUser = 'Wesley
+	fetch(URL + 'users/')
+		.then((response) => response.json())
+		.then((userList) => findOrCreateUser(userList, currentUser));
+}
+
+function findOrCreateUser(usersData, username) {
+	let usersArray = usersData.data;
+	let userExist = false;
+	let payload = { username: username };
+	usersArray.forEach((user) => {
+		if (user.attributes.username === username) {
+			userExist = true;
+		}
+	});
+	if (userExist) {
+		fetch(URL + `login`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(payload)
+		});
+		keySetup();
+		gameSetup();
+	} else {
+		createNewUser(username);
+	}
+}
+
+function createNewUser(username) {
+	let payload = { username: username };
+	fetch(URL + `login`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(payload)
+	});
 	keySetup();
-	gameSetup();
+	newUserSetup(username);
+}
+
+function newUserSetup(username) {
+	let startBtnArea = document.querySelector('#prompt_field');
+	startBtnArea.innerHTML = '';
+	newUserBtn = document.createElement('button');
+	newUserBtn.innerText = `Welcome ${username}, Click to Begin`;
+	newUserBtn.addEventListener('click', gameSetup);
+	startBtnArea.append(newUserBtn);
 }
 
 // * every character input on browser sends code to database
