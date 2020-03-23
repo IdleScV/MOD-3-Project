@@ -10,6 +10,12 @@ function pageSetup() {
 //! TRIGGERED BY GAMESETUP()
 // * every character input on browser sends code to database
 function keySetup() {
+	let runBtn = document.querySelector('.execute');
+	runBtn.addEventListener('click', () => {
+		eval(editor.getValue());
+	});
+
+	document.querySelector('.clear').onclick = console.clear;
 	document.addEventListener('keyup', sendCodeContent);
 }
 

@@ -6,6 +6,7 @@ editor.session.setMode('ace/mode/javascript'); // editor language
 editor.setTheme(editorTheme); // editor theme
 editor.session.setTabSize(3);
 editor.session.setUseWrapMode(true);
+editor.session.setValue('');
 
 //! initialize the opponent environment using the ace library
 var opponent_editor = ace.edit('opponent_editor');
@@ -14,6 +15,7 @@ opponent_editor.setTheme(editorTheme); // editor theme
 opponent_editor.setReadOnly(true); // read only
 opponent_editor.session.setTabSize(3);
 opponent_editor.session.setUseWrapMode(true);
+opponent_editor.session.setValue('');
 
 //! Override default console functions for our custom Dev Console
 function overrideDefault() {
