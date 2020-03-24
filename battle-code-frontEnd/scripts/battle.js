@@ -68,26 +68,26 @@ function chooseQuestion() {
 	let easyDifficulty = document.createElement('button');
 	easyDifficulty.innerText = 'Easy';
 	easyDifficulty.addEventListener('click', () => {
-		gameStartBtn(3);
+		gameStartBtn('easy');
 	});
 
 	let mediumDifficulty = document.createElement('button');
 	mediumDifficulty.innerText = 'Medium';
 	mediumDifficulty.addEventListener('click', () => {
-		gameStartBtn(3);
+		gameStartBtn('medium');
 	});
 
 	let hardDifficulty = document.createElement('button');
 	hardDifficulty.innerText = 'Hard';
 	hardDifficulty.addEventListener('click', () => {
-		gameStartBtn(4);
+		gameStartBtn('hard');
 	});
 
 	startBtnArea.append(easyDifficulty, mediumDifficulty, hardDifficulty);
 }
 
 //* game Ready Check
-function gameStartBtn(questionId) {
+function gameStartBtn(questionDifficulty) {
 	let startBtnArea = document.querySelector('#prompt_field');
 	startBtnArea.innerHTML = '';
 
@@ -96,13 +96,13 @@ function gameStartBtn(questionId) {
 	startBtn.classList = 'startBtn';
 	//* Runs gameStart function here
 	startBtn.addEventListener('click', () => {
-		readyCheck(questionId);
+		readyCheck(questionDifficulty);
 	});
 
 	startBtnArea.append(startBtn);
 }
 //! WebSocket Loading aka waiting for opponent to be ready
-function readyCheck(questionId) {
+function readyCheck(questionDifficulty) {
 	// let opponentReady = false;
 	// if (opponentReady === true) {
 	// 	countdown();
@@ -110,44 +110,41 @@ function readyCheck(questionId) {
 	// } else {
 	// 	waiting();
 	// }
-	gameStart(questionId);
+	gameStart(questionDifficulty);
 }
 
 //! Fetches question and passes it through to fillGameField
-function gameStart(id) {
+function gameStart(questionDifficulty) {
 	document.querySelector('#prompt_field button').removeEventListener;
-	fetchQuestion(id);
-	timeStart();
+	fetchQuestions(questionDifficulty);
+	// timeStart();
 	submitBtnSetup();
 }
 
-function fetchQuestion(id) {
-	fetch(URL + `questions/${id}`).then((response) => response.json()).then((question) => processQuestion(question, id));
+function fetchQuestions(questionDifficulty) {
+	fetch(URL + `questions`)
+		.then((response) => response.json())
+		.then((questions) => processAllQuestions(questions.data, questionDifficulty));
 }
 
-function processQuestion(questionData, questionId_num) {
-	// let questionPrompt = 'Write a function that finds sum';
-	// let editorText = `function findSum(a, b){ \n\n}\n \n \n \n// Don't remove text below\nconsole.log(findSum(1,2) == 3)\nconsole.log(findSum(2,2) == 4)`;
-	// let questionId = 1;
-	let questionSet = questionData.data.attributes;
+function processAllQuestions(allQuestionsData, questionDifficulty) {
+	let filteredQuestions = allQuestionsData.filter((question) => question.attributes.difficulty == questionDifficulty);
+	let randomQuestion = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
+	fillGameField(randomQuestion);
 	// debugger;
-	let questionPrompt = questionSet.questionPrompt;
-	let editorText = questionSet.editorText;
-	let questionId = questionId_num;
-	fillGameField(questionPrompt, editorText, questionId);
 }
 
 //* Fills game field with fetched question
-function fillGameField(question, editorText, questionId) {
+function fillGameField(question) {
 	//* sets up game data before starts
-
+	// debugger;
 	//* adds question
 	let questionField = document.querySelector('#prompt_field');
-	questionField.innerText = question;
-	questionField.dataset.questionId = questionId;
+	questionField.innerText = question.attributes.difficulty + '\n' + question.attributes.questionPrompt;
+	questionField.dataset.questionId = question.id;
 
 	//* adds editor text
-	let consoleText = editorText;
+	let consoleText = question.attributes.editorText;
 	editor.session.setValue(consoleText);
 	opponent_editor.session.setValue(consoleText);
 }
@@ -158,33 +155,37 @@ function timeStart() {}
 //* setup submit button
 function submitBtnSetup() {
 	let submitBtn = document.querySelector('.submit');
-	submitBtn.addEventListener('click', () => {
-		fetchAnswer(editor.getValue(), document.querySelector('#prompt_field').dataset.questionId);
-	});
+
+	submitBtn.addEventListener('click', fetchAnswer);
 }
 
 //* Runs the answer Checker
-function fetchAnswer(answer, questionId_type_id) {
-	fetch(URL + `questions/${questionId_type_id}`)
+function fetchAnswer() {
+	let questionId = document.querySelector('#prompt_field').dataset.questionId;
+	fetch(URL + `questions/${questionId}`)
 		.then((response) => response.json())
-		.then((finalTestData) => processAnswer(answer, finalTestData));
+		.then((finalTestData) => processAnswer(finalTestData));
 }
 
-function processAnswer(answerData, finalTestData) {
+function processAnswer(finalTestData) {
+	// debugger;
 	// let finalTest = `\n findSum(1,2) == 3 && findSum(2,2) == 4`;
+	let userAnswer = editor.getValue();
 	let finalTest = finalTestData.data.attributes.finalText;
 
-	checkAnswer(answerData, finalTest);
+	checkAnswer(userAnswer, finalTest);
 }
 
-function checkAnswer(userAnswer_type_code, actualAnswer_type_code) {
-	let totalCode = userAnswer_type_code + '\n' + actualAnswer_type_code;
+function checkAnswer(userAnswer, actualAnswer) {
+	let totalCode = userAnswer + '\n' + actualAnswer;
+	// debugger;
 	let ans = eval(totalCode);
-	if (ans === true) {
+	// debugger;
+	if (ans == true) {
 		//*
 		playerWin();
 	} else {
-		alert('. . . Try Again');
+		console.log('...try again');
 	}
 }
 
