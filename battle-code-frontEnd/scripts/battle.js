@@ -136,11 +136,12 @@ function processAllQuestions(allQuestionsData, questionDifficulty) {
 
 //* Fills game field with fetched question
 function fillGameField(question) {
-	//* sets up game data before starts
-	// debugger;
-	//* adds question
 	let questionField = document.querySelector('#prompt_field');
-	questionField.innerText = question.attributes.difficulty + '\n' + question.attributes.questionPrompt;
+	questionField.innerText =
+		`${question.attributes.difficulty.toUpperCase()}` +
+		`\n Question ID:${question.id}` +
+		'\n' +
+		question.attributes.questionPrompt;
 	questionField.dataset.questionId = question.id;
 
 	//* adds editor text
@@ -168,8 +169,6 @@ function fetchAnswer() {
 }
 
 function processAnswer(finalTestData) {
-	// debugger;
-	// let finalTest = `\n findSum(1,2) == 3 && findSum(2,2) == 4`;
 	let userAnswer = editor.getValue();
 	let finalTest = finalTestData.data.attributes.finalText;
 
@@ -178,9 +177,8 @@ function processAnswer(finalTestData) {
 
 function checkAnswer(userAnswer, actualAnswer) {
 	let totalCode = userAnswer + '\n' + actualAnswer;
-	// debugger;
 	let ans = eval(totalCode);
-	// debugger;
+
 	if (ans == true) {
 		//*
 		playerWin();
