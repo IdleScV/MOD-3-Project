@@ -166,9 +166,7 @@ function processRoomState(roomData) {
 		}, 1000);
 	} else {
 		console.log('Question Picked');
-		setTimeout(function() {
-			fetchBattleContent();
-		}, 500);
+		fetchBattleContent();
 	}
 }
 
@@ -179,9 +177,16 @@ function fetchBattleContent() {
 
 function setUserScreen(battleData) {
 	localStorage.setItem('currentBattleId', battleData.id);
-	console.log(battleData);
-	editor.setValue(battleData.userSolution);
-	opponent_editor.session.setValue(battleData.userSolution);
+	// console.log(battleData);
+	fetchQuestionForOpponent(battleData.question_id);
+}
+
+function fetchQuestionForOpponent(questionId) {
+	// console.log(questionId);
+	localStorage.setItem('Host', 'false');
+	fetch(URL + 'questions/' + questionId)
+		.then((response) => response.json())
+		.then((question) => fillGameField(question.data));
 }
 
 // ! FINISHED ABOVE
@@ -251,6 +256,7 @@ function processAllQuestions(allQuestionsData, questionDifficulty) {
 		.then((response) => response.json())
 		.then((json) => beginShareScreenHost(json, randomQuestion.id));
 
+	localStorage.setItem('Host', 'true');
 	fillGameField(randomQuestion);
 }
 //! Creates a new battle instance
