@@ -128,6 +128,7 @@ function processAllQuestions(allQuestionsData, questionDifficulty) {
 
 	localStorage.setItem('Host', 'true');
 	fillGameField(randomQuestion);
+	submitBtnSetup();
 }
 //! Creates a new battle instance
 function beginShareScreenHost(roomData, questionId) {
@@ -156,17 +157,4 @@ function createBattleDatum(battleData) {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ userSolution: editor.getValue() })
 	});
-}
-
-//! WebSocket Loading aka waiting for opponent to be ready
-function readyCheck(questionDifficulty) {
-	gameStart(questionDifficulty);
-}
-
-//! Fetches question and passes it through to fillGameField
-function gameStart(questionDifficulty) {
-	document.querySelector('#prompt_field button').removeEventListener;
-	fetchQuestions(questionDifficulty);
-	// timeStart();
-	submitBtnSetup();
 }
