@@ -155,9 +155,7 @@ function createBattleDatum(battleData) {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ userSolution: editor.getValue() })
-	})
-		.then((response) => response.json())
-		.then((json) => console.log(json));
+	});
 }
 
 //! WebSocket Loading aka waiting for opponent to be ready

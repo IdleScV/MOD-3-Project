@@ -91,4 +91,5 @@ function fetchQuestionForOpponent(questionId) {
 	fetch(URL + 'questions/' + questionId)
 		.then((response) => response.json())
 		.then((question) => fillGameField(question.data));
+	submitBtnSetup();
 }
