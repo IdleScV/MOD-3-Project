@@ -37,7 +37,6 @@ function waitForOpponent(data) {
 function checkRoomForOpponent(roomData) {
 	let opponent = roomData.data.attributes.player2;
 	if (opponent.id == 0) {
-		console.log('Checking again for player');
 		continueSearch();
 	} else {
 		localStorage.setItem('roomId', roomData.data.id);
@@ -50,12 +49,13 @@ function continueSearch() {
 	setTimeout(function() {
 		waitForOpponent();
 		console.clear();
-	}, 500);
+	}, 200);
 }
 
 //* Opponent Joined Room
 function showOpponentName(name) {
 	let startBtnArea = document.querySelector('#prompt_field');
+	localStorage.setItem('opponentUserName', name);
 	startBtnArea.innerHTML = `<p>${name} has joined the room</p>`;
 	setTimeout(function() {
 		chooseQuestion();
@@ -149,8 +149,6 @@ function beginShareScreenHost(roomData, questionId) {
 }
 
 function createBattleDatum(battleData) {
-	console.log(battleData);
-
 	localStorage.setItem('currentBattleId', battleData.id);
 
 	fetch(URL + 'battle_data/' + battleData.id, {

@@ -71,8 +71,7 @@ function processRoomState(roomData) {
 	if (state != 3) {
 		setTimeout(function() {
 			fetchingQuestionReadyState();
-			console.log('checking again');
-		}, 500);
+		}, 200);
 	} else {
 		console.log('Question Picked');
 		fetchBattleContent();
@@ -84,13 +83,10 @@ function fetchBattleContent() {
 }
 
 function setUserScreen(battleData) {
-	localStorage.setItem('currentBattleId', battleData.id);
-	// console.log(battleData);
 	fetchQuestionForOpponent(battleData.question_id);
 }
 
 function fetchQuestionForOpponent(questionId) {
-	// console.log(questionId);
 	localStorage.setItem('Host', 'false');
 	fetch(URL + 'questions/' + questionId)
 		.then((response) => response.json())
