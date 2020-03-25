@@ -8,6 +8,7 @@ function CreateRoom() {
 	fetchCreateRoom(roomNumber);
 }
 
+//* uses random room number to create new room instance
 function fetchCreateRoom(roomNumber) {
 	let player1Id = localStorage.getItem('currentUserId');
 	let payload = {
@@ -27,13 +28,13 @@ function fetchCreateRoom(roomNumber) {
 		.then((json) => waitForOpponent());
 }
 
+//* waits for a guest to join the room
 function waitForOpponent(data) {
 	let roomNumber = localStorage.getItem('roomNumber');
 	fetch(URL + 'rooms/' + roomNumber)
 		.then((response) => response.json())
 		.then((roomData) => checkRoomForOpponent(roomData));
 }
-//* waits 0.5 seconds before searches again
 function checkRoomForOpponent(roomData) {
 	let opponent = roomData.data.attributes.player2;
 	if (opponent.id == 0) {
@@ -44,7 +45,6 @@ function checkRoomForOpponent(roomData) {
 		showOpponentName(roomData.data.attributes.player2.username);
 	}
 }
-
 function continueSearch() {
 	setTimeout(function() {
 		waitForOpponent();
@@ -52,7 +52,7 @@ function continueSearch() {
 	}, 200);
 }
 
-//* Opponent Joined Room
+//* Opponent Joins Room, shows guest name & pauses for 3 seconds
 function showOpponentName(name) {
 	let startBtnArea = document.querySelector('#prompt_field');
 	localStorage.setItem('opponentUserName', name);
@@ -61,7 +61,8 @@ function showOpponentName(name) {
 		chooseQuestion();
 	}, 3000);
 }
-//* game Choose Question
+
+//* shows question selection
 function chooseQuestion() {
 	let startBtnArea = document.querySelector('#prompt_field');
 	startBtnArea.innerHTML = '';
@@ -87,7 +88,7 @@ function chooseQuestion() {
 	startBtnArea.append(easyDifficulty, mediumDifficulty, hardDifficulty);
 }
 
-//! Runs when Difficulty is chosen
+//* Game difficulty is chosen, creates ready button before question is fetched
 function gameStartBtn(difficulty) {
 	let startBtnArea = document.querySelector('#prompt_field');
 	startBtnArea.innerHTML = '';
@@ -102,13 +103,15 @@ function gameStartBtn(difficulty) {
 
 	startBtnArea.append(startBtn);
 }
-//! Fetches Question
+
+//* once ready button is clicked, we fetch the question
 function fetchQuestions(questionDifficulty) {
 	fetch(URL + `questions`)
 		.then((response) => response.json())
 		.then((questions) => processAllQuestions(questions.data, questionDifficulty));
 }
-//! updates room state
+
+//* question is processed & we update the room state to 3
 function processAllQuestions(allQuestionsData, questionDifficulty) {
 	let filteredQuestions = allQuestionsData.filter((question) => question.attributes.difficulty == questionDifficulty);
 	let randomQuestion = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
@@ -130,7 +133,8 @@ function processAllQuestions(allQuestionsData, questionDifficulty) {
 	fillGameField(randomQuestion);
 	submitBtnSetup();
 }
-//! Creates a new battle instance
+
+//* New battle instance is also created, providing the question ID to our guest
 function beginShareScreenHost(roomData, questionId) {
 	let roomInfo = roomData.data.attributes;
 	let payload = {
@@ -149,6 +153,7 @@ function beginShareScreenHost(roomData, questionId) {
 		.then((json) => createBattleDatum(json));
 }
 
+//* battle data is created also, to allow display of code.
 function createBattleDatum(battleData) {
 	localStorage.setItem('currentBattleId', battleData.id);
 

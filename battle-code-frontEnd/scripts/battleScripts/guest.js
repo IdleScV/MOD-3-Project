@@ -10,6 +10,7 @@ function findRoom() {
 	roomNumberInput.addEventListener('submit', submitRoomNumber);
 }
 
+//* runs room number
 function submitRoomNumber(event) {
 	event.preventDefault();
 	let roomNumber = event.currentTarget.roomNumber.value;
@@ -19,6 +20,7 @@ function submitRoomNumber(event) {
 		.then((roomData) => checkRoomNumber(roomData, roomNumber));
 }
 
+//* checks if room number exist
 function checkRoomNumber(roomData, roomNumber) {
 	if (roomData.message) {
 		console.log('This Room Does Not Exist');
@@ -33,6 +35,7 @@ function checkRoomNumber(roomData, roomNumber) {
 	}
 }
 
+//* if room number exist, updates room state to 2
 function updateRoomWithPlayer(roomData) {
 	let roomId = roomData.id;
 	localStorage.setItem('roomId', roomId);
@@ -53,6 +56,8 @@ function updateRoomWithPlayer(roomData) {
 		.then((response) => response.json())
 		.then((json) => waitingForQuestionToBeSelected(json));
 }
+
+//* waits for host to choose a question difficulty
 function waitingForQuestionToBeSelected(json) {
 	let startBtnArea = document.querySelector('#prompt_field');
 	localStorage.setItem('OpponentUserName', json.data.attributes.player1.username);
@@ -71,21 +76,23 @@ function processRoomState(roomData) {
 	if (state != 3) {
 		setTimeout(function() {
 			fetchingQuestionReadyState();
-		}, 200);
+		}, 100);
 	} else {
 		console.log('Question Picked');
 		fetchBattleContent();
 	}
 }
+
+//* once host has picked a question, we fetch the question
 function fetchBattleContent() {
 	let roomId = localStorage.getItem('roomId');
 	fetch(URL + 'battles/' + roomId).then((response) => response.json()).then((json) => setUserScreen(json));
 }
-
 function setUserScreen(battleData) {
 	fetchQuestionForOpponent(battleData.question_id);
 }
 
+//* fetches question is used to fill user editor. enable submit button function
 function fetchQuestionForOpponent(questionId) {
 	localStorage.setItem('Host', 'false');
 	fetch(URL + 'questions/' + questionId)

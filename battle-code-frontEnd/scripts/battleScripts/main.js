@@ -1,19 +1,21 @@
+//* Runs after user "logs in" with username
 function gameSetup() {
 	createButtons();
 }
 
+//* Creates 3 buttons
 function createButtons() {
 	let startBtnArea = document.querySelector('#prompt_field');
 	startBtnArea.innerHTML = '';
-	//* Create Room
+	//* Create Room => runs in host.js
 	let createRoomBtn = document.createElement('button');
 	createRoomBtn.innerText = 'Create Room';
 	createRoomBtn.addEventListener('click', CreateRoom);
-	//* Find Room
+	//* Find Room => runs in guest.js
 	let findRoomBtn = document.createElement('button');
 	findRoomBtn.innerText = 'Find Room';
 	findRoomBtn.addEventListener('click', findRoom);
-	//* Logout
+	//* logs user out.
 	let logoutBtn = document.createElement('button');
 	logoutBtn.innerText = 'Logout';
 	logoutBtn.addEventListener('click', logout);
@@ -46,21 +48,21 @@ function submitBtnSetup() {
 	submitBtn.addEventListener('click', fetchAnswer);
 }
 
-//* Runs the answer Checker
+//* fetches answer from database after submit button is triggered
 function fetchAnswer() {
 	let questionId = document.querySelector('#prompt_field').dataset.questionId;
 	fetch(URL + `questions/${questionId}`)
 		.then((response) => response.json())
 		.then((finalTestData) => processAnswer(finalTestData));
 }
-
+//* runs answer against function
 function processAnswer(finalTestData) {
 	let userAnswer = editor.getValue();
 	let finalTest = finalTestData.data.attributes.finalText;
 
 	checkAnswer(userAnswer, finalTest);
 }
-
+//* checks if answer is correct
 function checkAnswer(userAnswer, actualAnswer) {
 	let totalCode = userAnswer + '\n' + actualAnswer;
 	let ans = eval(totalCode);
@@ -73,7 +75,7 @@ function checkAnswer(userAnswer, actualAnswer) {
 	}
 }
 
-//* Stops player time & begins continuous fetch 5 times a second for when opponent finishes.
+//* Stops player time & makes a push to check if opponent completed.
 function playerWin() {
 	alert('You finished');
 }
