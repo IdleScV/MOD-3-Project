@@ -46,7 +46,9 @@ function findOrCreateUser(usersData, username) {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(payload)
-		});
+		})
+			.then((response) => response.json())
+			.then((userId) => saveId(userId));
 		keySetup();
 		gameSetup();
 	} else {
@@ -62,9 +64,15 @@ function createNewUser(username) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(payload)
-	});
+	})
+		.then((response) => response.json())
+		.then((userId) => saveId(userId));
 	keySetup();
 	newUserSetup(username);
+}
+
+function saveId(currentUserId) {
+	localStorage.setItem('currentUserId', currentUserId);
 }
 
 function newUserSetup(username) {

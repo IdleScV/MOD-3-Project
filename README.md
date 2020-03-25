@@ -63,3 +63,9 @@ user
 - username
 - mmr
 
+
+
+ROOM STATES
+1 = room has 1 player
+2 = room has 2 player
+3 = waiting for difficulty selection
