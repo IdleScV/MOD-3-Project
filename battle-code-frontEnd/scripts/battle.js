@@ -123,6 +123,7 @@ function checkRoomNumber(roomData, roomNumber) {
 
 function updateRoomWithPlayer(roomData) {
 	let roomId = roomData.id;
+	localStorage.setItem('roomId', roomId);
 	let roomNumber = localStorage.getItem('roomNumber');
 	let userId = localStorage.getItem('currentUserId');
 	let payload = {
@@ -140,7 +141,7 @@ function updateRoomWithPlayer(roomData) {
 		.then((response) => response.json())
 		.then((json) => waitingForQuestionToBeSelected(json));
 }
-
+// ! FINISHED ABOVE
 function waitingForQuestionToBeSelected(json) {
 	let startBtnArea = document.querySelector('#prompt_field');
 	localStorage.setItem('OpponentUserName', json.data.attributes.player1.username);
@@ -148,14 +149,14 @@ function waitingForQuestionToBeSelected(json) {
 	startBtnArea.innerHTML = `<br><p>Waiting on ${opponentName} to pick a question difficulty</p>`;
 	fetchingQuestionReadyState();
 }
-
+// ! FINISHED ABOVE
 function fetchingQuestionReadyState() {
 	let roomNumber = localStorage.getItem('roomNumber');
 	fetch(URL + 'rooms/' + roomNumber)
 		.then((response) => response.json())
 		.then((roomData) => processRoomState(roomData.data.attributes));
 }
-
+// ! FINISHED ABOVE
 function processRoomState(roomData) {
 	let state = roomData.state;
 	if (state != 3) {
@@ -165,15 +166,25 @@ function processRoomState(roomData) {
 		}, 1000);
 	} else {
 		console.log('Question Picked');
+		setTimeout(function() {
+			fetchBattleContent();
+		}, 500);
 	}
 }
 
-//! LOGS OUT
-function logout() {
-	console.log('logging out');
-	fetch(URL + 'logout').then((response) => response.json()).then((json) => console.log(json));
-	userLogin();
+function fetchBattleContent() {
+	let roomId = localStorage.getItem('roomId');
+	fetch(URL + 'battles/' + roomId).then((response) => response.json()).then((json) => setUserScreen(json));
 }
+
+function setUserScreen(battleData) {
+	localStorage.setItem('currentBattleId', battleData.id);
+	console.log(battleData);
+	editor.setValue(battleData.userSolution);
+	opponent_editor.session.setValue(battleData.userSolution);
+}
+
+// ! FINISHED ABOVE
 
 //* game Choose Question
 function chooseQuestion() {
@@ -201,8 +212,32 @@ function chooseQuestion() {
 	startBtnArea.append(easyDifficulty, mediumDifficulty, hardDifficulty);
 }
 
-//* game Ready Check
-function gameStartBtn(questionDifficulty) {
+//! Runs when Difficulty is chosen
+function gameStartBtn(difficulty) {
+	let startBtnArea = document.querySelector('#prompt_field');
+	startBtnArea.innerHTML = '';
+
+	let startBtn = document.createElement('button');
+	startBtn.innerText = `Click if Ready`;
+	startBtn.classList = 'startBtn';
+	//* Runs gameStart function here
+	startBtn.addEventListener('click', () => {
+		fetchQuestions(difficulty);
+	});
+
+	startBtnArea.append(startBtn);
+}
+//! Fetches Question
+function fetchQuestions(questionDifficulty) {
+	fetch(URL + `questions`)
+		.then((response) => response.json())
+		.then((questions) => processAllQuestions(questions.data, questionDifficulty));
+}
+//! updates room state
+function processAllQuestions(allQuestionsData, questionDifficulty) {
+	let filteredQuestions = allQuestionsData.filter((question) => question.attributes.difficulty == questionDifficulty);
+	let randomQuestion = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
+
 	let roomId = localStorage.getItem('roomId');
 	let payload = { state: 3 };
 	fetch(URL + 'rooms/' + roomId, {
@@ -212,31 +247,43 @@ function gameStartBtn(questionDifficulty) {
 			Accept: 'application/json'
 		},
 		body: JSON.stringify(payload)
-	});
-	// .then((response) => beginShareScreenHost());
+	})
+		.then((response) => response.json())
+		.then((json) => beginShareScreenHost(json, randomQuestion.id));
 
-	let startBtnArea = document.querySelector('#prompt_field');
-	startBtnArea.innerHTML = '';
-	let startBtn = document.createElement('button');
-	startBtn.innerText = `Click if Ready`;
-	startBtn.classList = 'startBtn';
-	//* Runs gameStart function here
-	startBtn.addEventListener('click', () => {
-		readyCheck(questionDifficulty);
-	});
-
-	startBtnArea.append(startBtn);
+	fillGameField(randomQuestion);
 }
-
-function beginShareScreenHost() {
+//! Creates a new battle instance
+function beginShareScreenHost(roomData, questionId) {
+	let roomInfo = roomData.data.attributes;
 	let payload = {
-		userSolution: editor.getValue()
+		user_id: roomInfo.player1.id,
+		opponent_id: roomInfo.player2.id,
+		question_id: parseInt(questionId),
+		room_id: parseInt(roomData.data.id)
 	};
-	fetch(URL + 'battle_data', {
+
+	fetch(URL + 'battles', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload)
-	});
+	})
+		.then((response) => response.json())
+		.then((json) => createBattleDatum(json));
+}
+
+function createBattleDatum(battleData) {
+	console.log(battleData);
+
+	localStorage.setItem('currentBattleId', battleData.id);
+
+	fetch(URL + 'battle_data/' + battleData.id, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ userSolution: editor.getValue() })
+	})
+		.then((response) => response.json())
+		.then((json) => console.log(json));
 }
 
 //! WebSocket Loading aka waiting for opponent to be ready
@@ -252,19 +299,6 @@ function gameStart(questionDifficulty) {
 	submitBtnSetup();
 }
 
-function fetchQuestions(questionDifficulty) {
-	fetch(URL + `questions`)
-		.then((response) => response.json())
-		.then((questions) => processAllQuestions(questions.data, questionDifficulty));
-}
-
-function processAllQuestions(allQuestionsData, questionDifficulty) {
-	let filteredQuestions = allQuestionsData.filter((question) => question.attributes.difficulty == questionDifficulty);
-	let randomQuestion = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
-	fillGameField(randomQuestion);
-	// debugger;
-}
-
 //* Fills game field with fetched question
 function fillGameField(question) {
 	let questionField = document.querySelector('#prompt_field');
@@ -278,7 +312,6 @@ function fillGameField(question) {
 	//* adds editor text
 	let consoleText = question.attributes.editorText;
 	editor.session.setValue(consoleText);
-	opponent_editor.session.setValue(consoleText);
 }
 
 //! Starts time
@@ -321,4 +354,11 @@ function checkAnswer(userAnswer, actualAnswer) {
 //* Stops player time & begins continuous fetch 5 times a second for when opponent finishes.
 function playerWin() {
 	alert('You finished');
+}
+
+//! LOGS OUT
+function logout() {
+	console.log('logging out');
+	fetch(URL + 'logout').then((response) => response.json()).then((json) => console.log(json));
+	userLogin();
 }
