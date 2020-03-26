@@ -151,9 +151,20 @@ function checkAnswer(userAnswer, actualAnswer) {
 //* Stops player time & makes a push to check if opponent completed.
 function playerWin() {
 	let myTimer = document.querySelector('#my_timer');
-	myTimer.id = 'finished';
-	console.log(myTimer.innerText);
+
+	let myTime = myTimer.innerText;
+
+	let parentTime = myTimer.parentNode;
+	parentTime.innerHTML = '';
+
+	let newP = document.createElement('p');
+	newP.innerText = 'YOU FINISHED';
+	let newTime = document.createElement('div');
+	newTime.innerText = myTime;
+	parentTime.append(newP, newTime);
+	parentTime.style.backgroundColor = 'lightgreen';
+
 	let userCodeField = document.querySelector('#user_code_field');
-	userCodeField.style.backgroundColor = 'green';
+	userCodeField.style.backgroundColor = 'lightgreen';
 	//! MAke a patch request to room to end session. change state to 4
 }
