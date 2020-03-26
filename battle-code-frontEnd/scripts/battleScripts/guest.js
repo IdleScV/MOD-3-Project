@@ -88,10 +88,11 @@ function fetchBattleContent() {
 	let roomId = localStorage.getItem('roomId');
 	fetch(URL + 'battles/' + roomId).then((response) => response.json()).then((json) => setUserScreen(json));
 }
+// BattleData here refers to the the battle model
 function setUserScreen(battleData) {
 	fetchQuestionForOpponent(battleData.question_id);
+	fetchCurrentBattleId(battleData.id);
 }
-
 //* fetches question is used to fill user editor. enable submit button function
 function fetchQuestionForOpponent(questionId) {
 	localStorage.setItem('Host', 'false');
@@ -99,4 +100,15 @@ function fetchQuestionForOpponent(questionId) {
 		.then((response) => response.json())
 		.then((question) => fillGameField(question.data));
 	submitBtnSetup();
+}
+//* Sets battle id in localStorage
+function fetchCurrentBattleId(battle_id) {
+	fetch(URL + 'battle_data/' + battle_id)
+		.then((response) => response.json())
+		.then((battle_data) => setCurrentBattleId(battle_data));
+}
+
+function setCurrentBattleId(battleData) {
+	localStorage.setItem('currentBattleId', battleData.data.id);
+	// fauxLiveShare();
 }

@@ -1,6 +1,7 @@
 //* Runs after user "logs in" with username
 function gameSetup() {
 	createButtons();
+	checkBattleId();
 }
 
 //* Creates 3 buttons
@@ -48,6 +49,46 @@ function submitBtnSetup() {
 	submitBtn.addEventListener('click', fetchAnswer);
 }
 
+//* Create fake liveShare system
+function fauxLiveShare() {
+	let battleDataId = localStorage.getItem('currentBattleId');
+	let hostStatus = localStorage.getItem('Host');
+
+	checkIfHost(battleDataId, hostStatus);
+}
+
+function checkIfHost(battleDataId, hostStatus) {
+	let code = editor.getValue();
+	let payload = {};
+	debugger;
+	if (hostStatus == 'true') {
+		payload = { userSolution: code };
+	} else {
+		payload = { opponentSolution: code };
+	}
+	pushCodeAndUpdate(battleDataId, payload);
+}
+
+function pushCodeAndUpdate(battleDataId, payload) {
+	fetch(URL + 'battle_data/' + battleDataId, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify(payload)
+	})
+		.then((response) => response.json())
+		.then((json) => updateOpponentCode(json));
+}
+
+function updateOpponentCode(json) {
+	console.log(json);
+	setTimeout(function() {
+		fauxLiveShare();
+	}, 2000);
+}
+
 //* fetches answer from database after submit button is triggered
 function fetchAnswer() {
 	let questionId = document.querySelector('#prompt_field').dataset.questionId;
@@ -85,4 +126,46 @@ function logout() {
 	console.log('logging out');
 	fetch(URL + 'logout').then((response) => response.json()).then((json) => console.log(json));
 	userLogin();
+}
+
+function checkBattleId() {
+	let currentBattleId = localStorage.getItem('currentBattleId');
+	if (currentBattleId) {
+		console.log('found id');
+		keyPressFetch(currentBattleId);
+	} else {
+		console.log('no id');
+		setTimeout(function() {
+			checkBattleId();
+		}, 2000);
+	}
+}
+
+function keyPressFetch(currentBattleId) {
+	document.addEventListener('keydown', (e) => {
+		handleKeyDown(currentBattleId);
+	});
+}
+
+function handleKeyDown(battleId) {
+	// console.log(editor.getValue());
+	let host = localStorage.Host;
+	let code = editor.getValue();
+	if (host == 'true') {
+		fetch(URL + 'battle_data/' + battleId, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userSolution: code })
+		})
+			.then((response) => response.json())
+			.then((data) => opponent_editor.session.setValue(data.opponentSolution));
+	} else if (host == 'false') {
+		fetch(URL + 'battle_data/' + battleId, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ opponentSolution: code })
+		})
+			.then((response) => response.json())
+			.then((data) => opponent_editor.session.setValue(data.userSolution));
+	}
 }

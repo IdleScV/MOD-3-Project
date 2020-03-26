@@ -1,5 +1,5 @@
 const URL = `http://127.0.0.1:3000/`;
-
+localStorage.clear();
 document.addEventListener('DOMContentLoaded', pageSetup);
 function pageSetup() {
 	overrideDefault();
@@ -84,7 +84,7 @@ function newUserSetup(username) {
 	startBtnArea.append(newUserBtn);
 }
 
-// * every character input on browser sends code to database
+//* Sets up run and clear buttons
 function keySetup() {
 	let runBtn = document.querySelector('.execute');
 	runBtn.addEventListener('click', () => {
