@@ -43,19 +43,44 @@ function fillGameField(question) {
 	//* adds editor text
 	let consoleText = question.attributes.editorText;
 	editor.session.setValue(consoleText);
+	timeStart();
 }
 
 //! Starts time
-function timeStart() {}
+function timeStart() {
+	let mainTimer = document.querySelector('#main_timer');
+	let myTimer = document.querySelector('#my_timer');
+	let opponentTimer = document.querySelector('#opponent_timer');
+
+	let currentTime = 0;
+	let convertedTime = '';
+	let allTimers = [ mainTimer, myTimer, opponentTimer ];
+	setInterval(function() {
+		currentTime += 1;
+		convertedTime = convertTime(currentTime);
+		allTimers.forEach((timer) => (timer.innerText = convertedTime));
+	}, 1000);
+}
+
+function convertTime(s) {
+	let seconds = s % 60;
+	let minutes = Math.floor(s / 60);
+	let time = [ minutes, seconds ];
+	for (let i = 0; i < time.length; i++) {
+		if (time[i].toString().length == 1) {
+			time[i] = '0' + time[i].toString();
+		}
+	}
+	return time.join(':');
+}
 
 //! Starts posting user code and fetching opponent code
 function checkBattleId() {
 	let currentBattleId = localStorage.getItem('currentBattleId');
 	if (currentBattleId) {
-		console.log('found id');
+		// console.log('found id');
 		codeFetchBegin(currentBattleId);
 	} else {
-		console.log('no id');
 		setTimeout(function() {
 			checkBattleId();
 		}, 2000);
@@ -125,6 +150,9 @@ function checkAnswer(userAnswer, actualAnswer) {
 
 //* Stops player time & makes a push to check if opponent completed.
 function playerWin() {
+	let myTimer = document.querySelector('#my_timer');
+	myTimer.id = 'finished';
+	console.log(myTimer.innerText);
 	let userCodeField = document.querySelector('#user_code_field');
 	userCodeField.style.backgroundColor = 'green';
 	//! MAke a patch request to room to end session. change state to 4
