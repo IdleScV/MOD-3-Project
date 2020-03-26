@@ -103,7 +103,8 @@ function runFetchSequence(battleId) {
 			body: JSON.stringify({ userSolution: code })
 		})
 			.then((response) => response.json())
-			.then((data) => opponent_editor.session.setValue(data.opponentSolution));
+			// .then((data) => opponent_editor.session.setValue(data.opponentSolution));
+			.then((data) => updateOpponentEditor(data));
 	} else if (host == 'false') {
 		fetch(URL + 'battle_data/' + battleId, {
 			method: 'PATCH',
@@ -111,8 +112,42 @@ function runFetchSequence(battleId) {
 			body: JSON.stringify({ opponentSolution: code })
 		})
 			.then((response) => response.json())
-			.then((data) => opponent_editor.session.setValue(data.userSolution));
+			// .then((data) => opponent_editor.session.setValue(data.userSolution));
+			.then((data) => updateUserEditor(data));
 	}
+}
+
+function updateOpponentEditor(data) {
+	opponent_editor.session.setValue(data.opponentSolution);
+	if (data.opponentTime) {
+		updateOpponentTime(data.opponentTime);
+	}
+}
+
+function updateUserEditor(data) {
+	opponent_editor.session.setValue(data.userSolution);
+	if (data.userTime) {
+		updateOpponentTime(data.userTime);
+	}
+}
+
+function updateOpponentTime(OpponentTime) {
+	let opponentTimer = document.querySelector('#opponent_timer');
+
+	let opponentTimeArea = opponentTimer.parentNode;
+	opponentTimeArea.innerHTML = '';
+
+	let newP = document.createElement('p');
+	newP.innerText = 'FINISHED';
+
+	let newTime = document.createElement('div');
+	newTime.innerText = OpponentTime;
+
+	opponentTimeArea.append(newP, newTime);
+	opponentTimeArea.style.backgroundColor = 'lightgreen';
+
+	let opponentCodeField = document.querySelector('#opponent_code_field');
+	opponentCodeField.style.backgroundColor = 'lightgreen';
 }
 
 //! Setup Submit Button
@@ -151,20 +186,39 @@ function checkAnswer(userAnswer, actualAnswer) {
 //* Stops player time & makes a push to check if opponent completed.
 function playerWin() {
 	let myTimer = document.querySelector('#my_timer');
-
 	let myTime = myTimer.innerText;
-
+	updatePlayerTime(myTime);
 	let parentTime = myTimer.parentNode;
 	parentTime.innerHTML = '';
 
 	let newP = document.createElement('p');
 	newP.innerText = 'YOU FINISHED';
+
 	let newTime = document.createElement('div');
 	newTime.innerText = myTime;
+
 	parentTime.append(newP, newTime);
 	parentTime.style.backgroundColor = 'lightgreen';
 
 	let userCodeField = document.querySelector('#user_code_field');
 	userCodeField.style.backgroundColor = 'lightgreen';
 	//! MAke a patch request to room to end session. change state to 4
+}
+
+function updatePlayerTime(finishedTime) {
+	let battleId = localStorage.getItem('currentBattleId');
+	let host = localStorage.getItem('Host');
+	if (host == 'true') {
+		fetch(URL + 'battle_data/' + battleId, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userTime: finishedTime })
+		});
+	} else {
+		fetch(URL + 'battle_data/' + battleId, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ opponentTime: finishedTime })
+		});
+	}
 }
