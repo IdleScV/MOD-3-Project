@@ -109,6 +109,9 @@ function fetchCurrentBattleId(battle_id) {
 }
 
 function setCurrentBattleId(battleData) {
-	localStorage.setItem('currentBattleId', battleData.data.id);
-	// fauxLiveShare();
+	if (battleData.data) {
+		localStorage.setItem('currentBattleId', battleData.data.id);
+	} else {
+		fetchBattleContent();
+	}
 }
